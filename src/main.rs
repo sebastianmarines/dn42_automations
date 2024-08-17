@@ -1,19 +1,23 @@
+use log::info;
+use simple_logger::SimpleLogger;
+
+mod peer;
 mod wireguard;
-
-struct Peer {
-    name: String,
-}
-
-type Peers = Vec<Peer>;
 
 #[tokio::main]
 async fn main() -> Result<(), String> {
-    let peers: Peers = vec![Peer {
+    SimpleLogger::new()
+        .with_colors(true)
+        .with_level(log::LevelFilter::Info)
+        .init()
+        .unwrap();
+
+    let peers: peer::Peers = vec![peer::Peer {
         name: "Kioubit".to_string(),
     }];
 
     for peer in peers {
-        println!("Creating peering with peer: {}", peer.name);
+        info!("Creating peering with peer: {}", peer.name);
         wireguard::create_peering(peer).await?;
     }
 
